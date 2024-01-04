@@ -1,4 +1,9 @@
+#!/usr/bin/python3
+""" Pascal's Triangle module """
+
+
 def pascal_triangle(n):
+    """ Represents the function pascal triangle """
     if n <= 0:
         return []
 
