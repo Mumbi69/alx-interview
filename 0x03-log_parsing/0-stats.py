@@ -1,40 +1,51 @@
 #!/usr/bin/python3
 """log parsing"""
 
-from sys import stdin
-
-status_dict = {200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 500: 0}
-total_file_size = 0
-count = 0
+import sys
+import signal
 
 
-def print_all_statistics():
-    """Prints total file size and counts of each status code."""
-    print("File size:", total_file_size)
-    for key, value in status_dict.items():
-        if value:
-            print("{}: {}".format(key, value))
+def print_stats(total_size, status_counts):
+    """Prints total file size and counts of each status code"""
+    print(f"File size: {total_size}")
+    for status_code in sorted(status_counts):
+        print(f"{status_code}: {status_counts[status_code]}")
 
 
-try:
-    for line in stdin:
-        count += 1
+def main():
+    """main class"""
+    total_size = 0
+    status_counts = {}
+    line_count = 0
 
+    def signal_handler(sig, frame):
+        """handling the signal class"""
+        print_stats(total_size, status_counts)
+        sys.exit(0)
+
+    signal.signal(signal.SIGINT, signal_handler)
+
+    for line in sys.stdin:
+        line_count += 1
         try:
-            line_parts = line.split(" ")
-            status_code = int(line_parts[7])
-            file_size = int(line_parts[8])
+            parts = line.split()
+            ip_address = parts[0]
+            date = parts[3][1:]
+            status_code = int(parts[-2])
+            file_size = int(parts[-1])
+
+            if parts[5] != "GET" or parts[6] != "/projects/260" or parts[7] != "HTTP/1.1":
+                continue
+
+            total_size += file_size
+            status_counts[status_code] = status_counts.get(status_code, 0) + 1
+
+            if line_count % 10 == 0:
+                print_stats(total_size, status_counts)
+
         except (IndexError, ValueError):
             continue
 
-        status_dict[status_code] += 1
-        total_file_size += file_size
 
-        if count == 10:
-            print_all_statistics()
-            count = 0
-
-    print_all_statistics()
-
-except KeyboardInterrupt:
-    print_all_statistics()
+if __name__ == "__main__":
+    main()
