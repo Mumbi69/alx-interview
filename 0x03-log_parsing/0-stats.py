@@ -1,51 +1,36 @@
 #!/usr/bin/python3
-"""log parsing"""
+"""logs parsing"""
 
-import sys
-import signal
+from sys import stdin
 
-
-def print_stats(total_size, status_counts):
-    """Prints total file size and counts of each status code"""
-    print(f"File size: {total_size}")
-    for status_code in sorted(status_counts):
-        print(f"{status_code}: {status_counts[status_code]}")
+status_dict = {200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 500: 0}
+total_file_size = 0
+count = 0
 
 
-def main():
-    """main class"""
-    total_size = 0
-    status_counts = {}
-    line_count = 0
+def print_all():
+    """print all metrics."""
+    print("File size:", total_file_size)
+    for key, value in status_dict.items():
+        if value:
+            print("{}: {}".format(key, value))
 
-    def signal_handler(sig, frame):
-        """handling the signal class"""
-        print_stats(total_size, status_counts)
-        sys.exit(0)
 
-    signal.signal(signal.SIGINT, signal_handler)
-
-    for line in sys.stdin:
-        line_count += 1
+try:
+    for line in stdin:
+        count += 1
         try:
-            parts = line.split()
-            ip_address = parts[0]
-            date = parts[3][1:]
-            status_code = int(parts[-2])
-            file_size = int(parts[-1])
-
-            if parts[5] != "GET" or parts[6] != "/projects/260" or parts[7] != "HTTP/1.1":
-                continue
-
-            total_size += file_size
-            status_counts[status_code] = status_counts.get(status_code, 0) + 1
-
-            if line_count % 10 == 0:
-                print_stats(total_size, status_counts)
-
-        except (IndexError, ValueError):
+            line = line.split(" ")
+            status_code = int(line[7])
+            file_size = int(line[8])
+        except (IndexError, TypeError):
             continue
-
-
-if __name__ == "__main__":
-    main()
+        status_dict[status_code] += 1
+        total_file_size += file_size
+        if count == 10:
+            print_all()
+            count = 0
+except KeyboardInterrupt:
+    pass
+finally:
+    print_all()
