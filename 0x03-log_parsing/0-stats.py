@@ -1,36 +1,39 @@
 #!/usr/bin/python3
-"""logs parsing"""
+"""Log parsing"""
 
-from sys import stdin
-
-status_dict = {200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 500: 0}
-total_file_size = 0
-count = 0
+import sys
 
 
-def print_all():
-    """print all metrics."""
-    print("File size:", total_file_size)
-    for key, value in status_dict.items():
-        if value:
-            print("{}: {}".format(key, value))
+if __name__ == '__main__':
 
+    filesize, count = 0, 0
+    codes = ["200", "301", "400", "401", "403", "404", "405", "500"]
+    stats = {k: 0 for k in codes}
 
-try:
-    for line in stdin:
-        count += 1
-        try:
-            line = line.split(" ")
-            status_code = int(line[7])
-            file_size = int(line[8])
-        except (IndexError, TypeError):
-            continue
-        status_dict[status_code] += 1
-        total_file_size += file_size
-        if count == 10:
-            print_all()
-            count = 0
-except KeyboardInterrupt:
-    pass
-finally:
-    print_all()
+    def print_stats(stats: dict, file_size: int) -> None:
+        """prints all the metrics"""
+        print("File size: {:d}".format(filesize))
+        for k, v in sorted(stats.items()):
+            if v:
+                print("{}: {}".format(k, v))
+
+    try:
+        for line in sys.stdin:
+            count += 1
+            data = line.split()
+            try:
+                status_code = data[-2]
+                if status_code in stats:
+                    stats[status_code] += 1
+            except BaseException:
+                pass
+            try:
+                filesize += int(data[-1])
+            except BaseException:
+                pass
+            if count % 10 == 0:
+                print_stats(stats, filesize)
+        print_stats(stats, filesize)
+    except KeyboardInterrupt:
+        print_stats(stats, filesize)
+        raise
