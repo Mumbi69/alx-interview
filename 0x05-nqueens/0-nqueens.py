@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 """N Queens module"""
+
 from sys import argv
 
 
