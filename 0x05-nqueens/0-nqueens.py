@@ -11,11 +11,11 @@ if len(sys.argv) != 2:
 try:
     size = int(sys.argv[1])
 except ValueError:
-    print("N must be a number")
+    print("size must be a number")
     sys.exit(1)
 
 if size < 4:
-    print("N must be at least 4")
+    print("size must be at least 4")
     sys.exit(1)
 
 chessboard = []
