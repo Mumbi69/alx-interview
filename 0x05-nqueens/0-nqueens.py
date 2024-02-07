@@ -4,6 +4,18 @@
 import sys
 
 
+if len(sys.argv) != 2:
+    print("Usage: nqueens N")
+    exit(1)
+if not sys.argv[1].isdigit():
+    print("N must be a number")
+    exit(1)
+n = int(sys.argv[1])
+if n < 4:
+    print("N must be at least 4")
+    exit(1)
+
+
 def check_if_safe(i, j, board):
     """
     Args:
@@ -42,16 +54,6 @@ def backtrack(n, row, q_board, s_board):
             q_board.pop()
 
 
-if len(sys.argv) != 2:
-    print("Usage: nqueens N")
-    exit(1)
-if not sys.argv[1].isdigit():
-    print("N must be a number")
-    exit(1)
-n = int(sys.argv[1])
-if n < 4:
-    print("N must be at least 4")
-    exit(1)
 solution_board = []
 queen_board = []
 backtrack(n, 0, queen_board, solution_board)
