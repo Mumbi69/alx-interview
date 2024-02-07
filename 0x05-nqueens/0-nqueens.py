@@ -4,56 +4,54 @@
 import sys
 
 
-def is_safe(board, row, col, N):
-    """Check if there's a queen in the same column"""
-    for i in range(row):
-        if board[i][col] == 1:
-            return False
+if len(sys.argv) != 2:
+    print("Usage: nqueens N")
+    sys.exit(1)
 
-    # Check upper left diagonal
-    for i, j in zip(range(row, -1, -1), range(col, -1, -1)):
-        if board[i][j] == 1:
-            return False
+try:
+    size = int(sys.argv[1])
+except ValueError:
+    print("N must be a number")
+    sys.exit(1)
 
-    # Check upper right diagonal
-    for i, j in zip(range(row, -1, -1), range(col, N)):
-        if board[i][j] == 1:
-            return False
+if size < 4:
+    print("N must be at least 4")
+    sys.exit(1)
 
-    return True
+chessboard = []
+for i in range(size):
+    row = []
+    for j in range(size):
+        row.append(0)
+    chessboard.append(row)
+queens_positions = []
 
-def solve_nqueens_util(board, row, N):
-    """
-    a recursive helper function that tries to place queens
-    on the board row by row. It backtracks when it reaches a
-    dead-end or finds a solution, printing the solutions as it finds them.
-    """
-    if row == N:
-        for i in range(N):
-            print("".join(str(cell) for cell in board[i]))
-        print()
-        return
 
-    for col in range(N):
-        if is_safe(board, row, col, N):
-            board[row][col] = 1
-            solve_nqueens_util(board, row + 1, N)
-            board[row][col] = 0
+def mark_available_spots(queens, board):
+    """This function checks and marks available spots on a chessboard."""
+    for i, row in enumerate(board):
+        for j, square in enumerate(row):
+            for x, y in queens:
+                if i == x or j == y or abs(i - x) == abs(j - y):
+                    board[i][j] = 1
 
-def solve_nqueens(N):
-    """
-    responsible for parsing the command-line argument,
-    validating it, and initiating the recursive backtracking
-    algorithm to find solutions.
-    """
-    if not N.isdigit():
-        print("N must be a number")
-        sys.exit(1)
 
-    N = int(N)
-    if N < 4:
-        print("N must be at least 4")
-        sys.exit(1)
+def place_queens(size, queens, board, solutions):
+    """This function places queens on a chessboard of given size"""
+    if len(queens) == size:
+        sorted_queens = sorted(queens, key=lambda x: x[0])
+        if sorted_queens not in solutions:
+            solutions.append(queens)
+        return solutions
+    mark_available_spots(queens, board)
+    for i, row in enumerate(board):
+        for j, square in enumerate(row):
+            if not square:
+                board_copy = [r[:] for r in board]
+                place_queens(size, queens + [[i, j]], board_copy, solutions)
+    return solutions
 
-    board = [[0 for _ in range(N)] for _ in range(N)]
-    solve_nqueens_util(board, 0, N)
+
+queens_positions = place_queens(size, queens_positions, chessboard, [])
+for queen in queens_positions:
+    print(queen)
