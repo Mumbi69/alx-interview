@@ -60,7 +60,3 @@ queen_board = []
 backtrack(n, 0, queen_board, solution_board)
 for row in solution_board:
     print(row)
-
-
-if __name__ == "__main__":
-    main()
