@@ -7,79 +7,66 @@ def check_row(board, index, board_len):
     """This function checks if there is a queen in the row """
     for r in range(board_len):
         if board[index][r]:
-            return False
+            return (False)
 
-    return True
+    return (True)
 
 
-def check_diagonals(board, row, col, board_len, step):
-    """This function checks if there is a queen in the diagonals """
+def check_r_angle(board, row, col, board_len):
+    """This function checks if there is a queen in the left angle """
     c = col
     for r in range(row, -1, -1):
-        if c < 0 or c >= board_len:
+        if c >= board_len:
             break
         if board[r][c]:
-            return False
-        c += step
+            return (False)
+        c += 1
 
-    return True
+    c = col
+    for r in range(row, board_len):
+        if c < 0:
+            break
+        if board[r][c]:
+            return (False)
+        c -= 1
+
+    return (True)
 
 
-def check_all(board, row, col, n):
-    """This function checks if it's safe to place a queen at a given position """
-    if not check_row(board, row, n):
-        return False
+def check_l_angle(board, row, col, board_len):
+    """This function checks if there is a queen in the right angle """
+    c = col
+    for r in range(row, -1, -1):
+        if c < 0:
+            break
+        if board[r][c]:
+            return (False)
+        c -= 1
 
-    return check_diagonals(board, row, col, n, -1) and check_diagonals(board, row, col, n, 1)
+    c = col
+    for r in range(row, board_len):
+        if c >= board_len:
+            break
+        if board[r][c]:
+            return (False)
+        c += 1
+
+    return (True)
 
 
-def solve_nqueens(n):
-    """This function solves the N queens problem """
-    if n < 4:
-        print("N must be at least 4")
-        exit(1)
+def chek_all(board, r, c, n):
+    """This function checks all"""
+    if not check_row(board, r, n):
+        return (False)
 
-    board = [[0] * n for _ in range(n)]
-    result = []
+    if not check_l_angle(board, r, c, n):
+        return (False)
 
-    i = 0
-    c = 0
-    r = i
-
-    while i < n:
-        while c < n:
-            found = False
-
-            while r < n:
-                if check_all(board, r, c, n):
-                    board[r][c] = 1
-                    result.append([c, r])
-                    found = True
-                    r = 0
-                    break
-                r += 1
-
-            if not found and result:
-                last_i = result.pop()
-                c = last_i[0]
-                r = last_i[1] + 1
-                board[last_i[1]][last_i[0]] = 0
-                continue
-            c += 1
-
-        if result:
-            print(result)
-            i = result[0][1]
-            last_i = result.pop()
-            c = last_i[0]
-            r = last_i[1] + 1
-            board[last_i[1]][last_i[0]] = 0
-        else:
-            return
+    return (check_r_angle(board, r, c, n))
 
 
 def main():
-    """Initializing function """
+    """Intializing function"""
 
     argc = len(argv)
     if argc != 2:
@@ -92,7 +79,46 @@ def main():
         print("N must be a number")
         exit(1)
 
-    solve_nqueens(n)
+    if n < 4:
+        print("N must be at least 4")
+        exit(1)
+
+    n_range = range(n)
+    i = 0
+    c = 0
+    r = i
+    board = [[0 for _ in n_range] for _ in n_range]
+    result = []
+    while i < n:
+        while (c < n):
+            found = 0
+
+            while (r < n):
+                if chek_all(board, r, c, n):
+                    board[r][c] = 1
+                    result.append([c, r])
+                    found = 1
+                    r = 0
+                    break
+                r += 1
+
+            if not found and len(result):
+                last_i = result.pop()
+                c = last_i[0]
+                r = last_i[1] + 1
+                board[last_i[1]][last_i[0]] = 0
+                continue
+            c += 1
+
+        if len(result):
+            print(result)
+            i = result[0][1]
+            last_i = result.pop()
+            c = last_i[0]
+            r = last_i[1] + 1
+            board[last_i[1]][last_i[0]] = 0
+        else:
+            return
 
 
 if __name__ == "__main__":
