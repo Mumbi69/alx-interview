@@ -1,6 +1,6 @@
 #!/usr/bin/node
 
-const request = require('request')
+const request = require('request');
 
 if (process.argv.length !== 3) {
     console.error('Usage: node 0-starwars_characters.js <movie_id>')
@@ -24,8 +24,8 @@ request(`https: // swapi.dev / api / films /${movieId} /`, (error, response, bod
                 process.exit(1)
             }
 
-            const character=JSON.parse(body)
-            console.log(character.name)
+            const character=JSON.parse(body);
+            console.log(character.name);
         })
     })
 })
