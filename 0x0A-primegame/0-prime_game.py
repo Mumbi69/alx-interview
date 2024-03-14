@@ -2,40 +2,46 @@
 """ Prime Game """
 
 
-def is_prime(num):
+def is_prime(n):
     """check if a number is prime"""
-    if (num <= 1):
+    if n <= 1:
         return False
-    i = 2
-    while (i * i) <= num:
-        if (num % i) == 0:
+    elif n <= 3:
+        return True
+    elif n % 2 == 0 or n % 3 == 0:
+        return False
+    i = 5
+    while i * i <= n:
+        if n % i == 0 or n % (i + 2) == 0:
             return False
-        i += 1
+        i += 6
     return True
 
 
-def primes_up_to_n(n):
+def primes_up_to_n(nums):
     """generate a list of prime numbers up to a given n"""
-    primes_up_to_n = 0
-    for i in range(2, n + 1):
-        if is_prime(i):
-            primes_up_to_n += 1
-    return primes_up_to_n
+    count = 0
+    for num in nums:
+        if is_prime(num):
+            count += 1
+    return count
 
 
 def isWinner(x, nums):
     """determines the winner based on whether the number
     of primes is even or odd"""
-    ben_w = maria_w = 0
-
-    if x <= 0 or nums is None or len(nums) == 0:
+    ben = 0
+    maria = 0
+    if x <= 0 or not nums:
         return None
-
-    for i in range(x):
-        if primes_up_to_n(nums[i]) % 2 == 0:
-            ben_w += 1
+    for num in range(x):
+        num_arr = [n for n in range(1, nums[num] + 1)]
+        if primes_up_to_n(num_arr) % 2 == 0:
+            ben += 1
         else:
-            maria_w += 1
-    if ben_w == maria_w:
+            maria += 1
+    if ben > maria:
+        return "Ben"
+    if ben == maria:
         return None
-    return 'Ben' if ben_w > maria_w else 'Maria'
+    return "Maria"
