@@ -1,9 +1,9 @@
 #!/usr/bin/python3
-""" Prime Game """
+"""module for functions"""
 
 
-def is_prime(n):
-    """check if a number is prime"""
+def isPrime(n):
+    """Check if a number is prime."""
     if n <= 1:
         return False
     elif n <= 3:
@@ -18,25 +18,24 @@ def is_prime(n):
     return True
 
 
-def primes_up_to_n(nums):
-    """generate a list of prime numbers up to a given n"""
+def countPrime(nums):
+    """Count the number of prime numbers in a list."""
     count = 0
     for num in nums:
-        if is_prime(num):
+        if isPrime(num):
             count += 1
     return count
 
 
 def isWinner(x, nums):
-    """determines the winner based on whether the number
-    of primes is even or odd"""
+    """Determine the winner based on prime number count."""
     ben = 0
     maria = 0
     if x <= 0 or not nums:
         return None
     for num in range(x):
         num_arr = [n for n in range(1, nums[num] + 1)]
-        if primes_up_to_n(num_arr) % 2 == 0:
+        if countPrime(num_arr) % 2 == 0:
             ben += 1
         else:
             maria += 1
