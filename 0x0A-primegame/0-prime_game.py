@@ -2,27 +2,18 @@
 """module for functions"""
 
 
-def isPrime(n):
-    """Check if a number is prime."""
-    if n <= 1:
-        return False
-    elif n <= 3:
-        return True
-    elif n % 2 == 0 or n % 3 == 0:
-        return False
-    i = 5
-    while i * i <= n:
-        if n % i == 0 or n % (i + 2) == 0:
-            return False
-        i += 6
-    return True
-
-
-def countPrime(nums):
-    """Count the number of prime numbers in a list."""
+def countPrime(n):
+    """Count the number of prime numbers."""
+    prime = [True for i in range(n + 1)]
+    p = 2
+    while p * p <= n:
+        if prime[p]:
+            for i in range(p * p, n + 1, p):
+                prime[i] = False
+        p += 1
     count = 0
-    for num in nums:
-        if isPrime(num):
+    for p in range(2, n + 1):
+        if prime[p]:
             count += 1
     return count
 
@@ -34,8 +25,7 @@ def isWinner(x, nums):
     if x <= 0 or not nums:
         return None
     for num in range(x):
-        num_arr = [n for n in range(1, nums[num] + 1)]
-        if countPrime(num_arr) % 2 == 0:
+        if countPrime(nums[num]) % 2 == 0:
             ben += 1
         else:
             maria += 1
